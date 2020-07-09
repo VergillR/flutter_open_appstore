@@ -29,11 +29,15 @@ public class OpenAppstorePlugin implements MethodCallHandler {
       result.success("Android " + android.os.Build.VERSION.RELEASE);
     }
     else if (call.method.equals("openappstore")) {
-      String android_id = call.argument("android_id");
-      try {
-        mRegistrar.activity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + android_id)));
-      } catch (android.content.ActivityNotFoundException e) {
-        mRegistrar.activity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + android_id)));
+      String manufacturer = android.os.Build.MANUFACTURER;
+      if (manufacturer.equals("Amazon")) {
+        mRegistrar.activity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("amzn://apps/android?p=" + android_id)));
+      } else {
+        try {
+          mRegistrar.activity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + android_id)));
+        } catch (android.content.ActivityNotFoundException e) {
+          mRegistrar.activity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + android_id)));
+        }
       }
       result.success(null);
     }
